@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class PostService {
     public $post;
@@ -13,16 +14,25 @@ class PostService {
 
     function getAllPost($option){
         if($option['search']['category_id']=="all" && $option['search']['state']=="all"){
-            return Post::with("category")->paginate($option['limit']);
+            $post = Post::with("category")->paginate($option['limit']);
         }
         //...
-        if($option['search']['category_id'] != "all" && $option['search']['state']=="all"){
-            return Post::with("category")->where(["category_id"=> $option['search']['category_id']])->paginate($option['limit']);
+        else if($option['search']['category_id'] != "all" && $option['search']['state']=="all"){
+            $post =  Post::with("category")->where(["category_id"=> $option['search']['category_id']])->paginate($option['limit']);
         }
-        if($option['search']['category_id'] == "all" && $option['search']['state'] != "all"){
-            return Post::with("category")->where(["state"=> $option['search']['state']])->paginate($option['limit']);
+        else if($option['search']['category_id'] == "all" && $option['search']['state'] != "all"){
+            $post = Post::with("category")->where(["state"=> $option['search']['state']])->paginate($option['limit']);
         }
-        return Post::with("category")->where(["state"=> $option['search']['state'], "category_id"=> $option['search']['category_id']])->paginate($option['limit']);
+        else{
+            $post = Post::with("category")->where(["state"=> $option['search']['state'], "category_id"=> $option['search']['category_id']])->paginate($option['limit']);
+        }
+        $posts = array();
+        foreach($post as $p){
+            $p->image = 'storage/'.$p->image;
+            array_push($posts, $p);
+        }
+        // dd($posts);
+        return $posts;
     }
     function getPost(){
         return Post::find($this->post->id);

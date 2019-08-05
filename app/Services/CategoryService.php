@@ -13,16 +13,14 @@ class CategoryService {
     }
 
     public function getAllCategory() {
-        if(!empty(Redis::lrange("categories", 0, -1))){
-            print("gfdgdd");
-            $category = Redis::lrange("categories", 0, -1);
+        if(!empty(Redis::get("categories"))){
+            $category = json_decode(Redis::get("categories"), true);
         }
         else {
-            $category = Category::with("posts")->get();
-            Redis::sadd("rpush",  $category);
+            $category = Category::with("posts")->get()->toArray();
+            Redis::set("categories",  json_encode($category));
         }
-        // Redis::del('categories');
-        dd($category);
+        // dd($category);
         return $category;
     }
 

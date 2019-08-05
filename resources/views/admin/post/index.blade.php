@@ -88,7 +88,7 @@
                                     </td>
                                     <td>{{ $post['category']['name'] }}</td>
                                     <td>
-                                        <img style="max-width: 150px" src="{{ Storage::url($post['image'] )}}">
+                                        <img style="max-width: 150px" src="{{ Storage::url($post['image']) }}">
                                     </td>
                                     <td>
                                         {{ $post['snapshort'] }}
@@ -115,7 +115,6 @@
                     <!-- /.box-body -->
                     <div class="box-footer clearfix">
 
-                        {{ $posts->links() }}
                     </div>
                 </div>
             </div>
