@@ -84,11 +84,11 @@
                                 <tr>
                                     <td>{{ $post['id'] }}</td>
                                     <td>
-                                        <a href="#"> {{ $post['title'] }}</a>
+                                    <a href="{{ route('public.post', ['id' => $post['id']]) }}"> {{ $post['title'] }}</a>
                                     </td>
                                     <td>{{ $post['category']['name'] }}</td>
                                     <td>
-                                        <img style="max-width: 150px" src="{{ Storage::url($post['image']) }}">
+                                        <img style="max-width: 150px" src="{{ $post['image'] }}">
                                     </td>
                                     <td>
                                         {{ $post['snapshort'] }}
@@ -114,7 +114,22 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer clearfix">
+                        {{-- {{dd($pagination)}} --}}
+                        @if ($pagination['total'] > $pagination['per_page'])
+                            <ul class="pagination">
+                                @if ($pagination['current_page'] > 1)
+                                    <li><a href="{{ $pagination['first_page_url']}}">First</a></li>
+                                    <li><a href="{{ $pagination['prev_page_url'] }}">Prev</a></li>
+                                @endif
 
+                                    <li><span>{{$pagination['current_page']}}</span></li>
+
+                                @if ($pagination['current_page'] < $pagination['last_page'])
+                                    <li><a href="{{ $pagination['next_page_url']}}">Next</a></li>
+                                    <li><a href="{{ $pagination['last_page_url'] }}">Last</a></li>
+                                @endif
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </div>

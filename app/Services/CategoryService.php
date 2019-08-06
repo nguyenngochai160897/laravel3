@@ -17,35 +17,34 @@ class CategoryService {
             $category = json_decode(Redis::get("categories"), true);
         }
         else {
-            $category = Category::with("posts")->get()->toArray();
-            Redis::set("categories",  json_encode($category));
+            $category = $this->category->getAllCategory();
+            // Redis::set("categories",  json_encode($category));
         }
-        // dd($category);
+        // Redis::del("categories");
         return $category;
     }
 
-    function getCategory(){
-        return Category::with("posts")->find($this->category->id);
+    function getCategory($id){
+        return $this->category->getCategory($id);
     }
 
-    function createCategory(){
-        $this->category->save();
+    function createCategory($data){
+        $this->category->createCategory($data);
     }
 
-    function updateCategory(){
-       Category::where("id", $this->category->id)->update(["name" => $this->category->name]);
+    function updateCategory($data){
+       $this->category->updateCategory($data['id'], [
+           'name' => $data['name']
+       ]);
     }
 
-    function deleteCategory(){
-        try {
-            Category::destroy($this->category->id);
+    function deleteCategory($id){
+        $delete = $this->category->deleteCategory($id);
+        if($delete['status'] == "fail"){
             return [
-                'status' => "success",
-            ];
-        } catch (\Exception $e) {
-            return [
-               "status" => "failed",
+                "error" => "Cannot delete"
             ];
         }
+        return;
     }
 }

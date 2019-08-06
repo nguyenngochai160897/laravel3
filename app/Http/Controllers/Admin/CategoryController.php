@@ -27,39 +27,34 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request)
     {
-        $this->categoryService->category->name = $request->input("name");
-        $this->categoryService->createCategory();
+        $data = [
+            "name" => $request->input("name")
+        ];
+        $this->categoryService->createCategory($data);
         return redirect()->route("admin.category.index");
     }
 
     public function showFormUpdate($id)
     {
         $this->categoryService->category->id = $id;
-        return view("admin.category.update")->with("category", $this->categoryService->getCategory());
+        return view("admin.category.update")->with("category", $this->categoryService->getCategory($id));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(CategoryRequest $request, $id)
     {
-        $this->categoryService->category->id = $id;
-        $this->categoryService->category->name = $request->input("name");
-        $this->categoryService->updateCategory();
+        $data = [
+            'id' => $id,
+            'name' => $request->input("name")
+        ];
+        $this->categoryService->updateCategory($data);
         return redirect()->route("admin.category.index");
     }
 
     public function delete($id)
     {
-        $this->categoryService->category->id = $id;
-        $data = $this->categoryService->deleteCategory();
-        if($data['status'] == "failed"){
-            $message = "Co mot vai bai viet lien quan den danh muc nay?Khong the xoa";
-            return redirect()->route("admin.category.index")->withErrors(['errors'=> $message]);
+        $data = $this->categoryService->deleteCategory($id);
+        if(isset($data['error'])){
+            return redirect()->route("admin.category.index")->withErrors(['errors'=> $data['error']]);
         }
         return redirect()->route("admin.category.index");
     }

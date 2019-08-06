@@ -13,44 +13,47 @@ class PostService {
     }
 
     function getAllPost($option){
-        if($option['search']['category_id']=="all" && $option['search']['state']=="all"){
-            $post = Post::with("category")->paginate($option['limit']);
-        }
-        //...
-        else if($option['search']['category_id'] != "all" && $option['search']['state']=="all"){
-            $post =  Post::with("category")->where(["category_id"=> $option['search']['category_id']])->paginate($option['limit']);
-        }
-        else if($option['search']['category_id'] == "all" && $option['search']['state'] != "all"){
-            $post = Post::with("category")->where(["state"=> $option['search']['state']])->paginate($option['limit']);
+        $post = $this->post->getAllPost($option)->toArray();
+        $posts = array_map(function($p) {
+            $p['image'] = asset('').Storage::url($p['image']);
+            return $p;
+        }, $post['data']);
+        $post['data'] = $posts;
+
+        return $post;
+    }
+    function getPost($id){
+        $post = $this->post->getPost($id);
+        $post->image = asset('').Storage::url($post->image);
+        return $post;
+    }
+    function createPost($data){
+        $file = $data['image'];
+        // generate a new filename. getClientOriginalExtension() for the file extension
+        $filename = time() .'-'. $file->getClientOriginalName();
+        // save to storage/app/images as the new $filename
+        $path = $file->storeAs('public/images', $filename);
+        $data['image'] = $path;
+        $this->post->createPost($data);
+    }
+    function updatePost($data){
+        $file = $data['image'];
+        if(empty($file)){
+            $post = $this->getPost($data['id']);
+            $imageName = explode("/", $post->image);
+            $imageName = ($imageName[count($imageName)-1]);
+            $data['image'] = "public/images/".$imageName;
         }
         else{
-            $post = Post::with("category")->where(["state"=> $option['search']['state'], "category_id"=> $option['search']['category_id']])->paginate($option['limit']);
+            // generate a new filename. getClientOriginalExtension() for the file extension
+            $filename = time() .'-'. $file->getClientOriginalName();
+            // save to storage/app/images as the new $filename
+            $path = $file->storeAs('public/images', $filename);
+            $data['image'] = $path;
         }
-        $posts = array();
-        foreach($post as $p){
-            $p->image = 'storage/'.$p->image;
-            array_push($posts, $p);
-        }
-        // dd($posts);
-        return $posts;
+        $this->post->updatePost($data, $data['id']);
     }
-    function getPost(){
-        return Post::find($this->post->id);
-    }
-    function createPost(){
-        $this->post->save();
-    }
-    function updatePost(){
-        Post::where("id", $this->post->id)->update([
-            "title" => $this->post->title,
-            "category_id" => $this->post->category_id,
-            "image" => $this->post->image,
-            "snapshort" => $this->post->snapshort,
-            "content" => $this->post->content,
-            "state" => $this->post->state
-        ]);
-    }
-    function deletePost() {
-        Post::destroy($this->post->id);
+    function deletePost($id) {
+        $this->post->deletePost($id);
     }
 }
