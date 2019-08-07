@@ -23,6 +23,13 @@ class UserSeeder extends Seeder
             "email" => "hainguyen@gmail.com",
             "password" => bcrypt("hainguyen"),
             "account_type" => "admin"
-        ]]);
+        ],
+        [
+            "username" =>"a",
+            "email" => "a@gmail.com",
+            "password" => bcrypt("a"),
+            "account_type" => "admin"
+        ]
+        ]);
     }
 }

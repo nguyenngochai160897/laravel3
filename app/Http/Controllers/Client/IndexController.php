@@ -16,17 +16,18 @@ class IndexController extends Controller
         $this->postService = $postService;
     }
     function defaultSideBar(){
-        $categories = $this->categoryService->getAllCategory();
-        $postRecent = $this->postService->getAllPost([
+        $option = [
             "limit" => 5,
             "search" => [
                 "category_id" => null,
-                "state" => "1"
+                "state" => 1
             ],
             "orderBy" => [
                 "id" => 'desc',
             ]
-        ]);
+        ];
+        $categories = $this->categoryService->getAllCategory();
+        $postRecent = $this->postService->getAllPost($option);
         $data = [
             "categories" => $categories,
             "postRecent" => $postRecent['data']
