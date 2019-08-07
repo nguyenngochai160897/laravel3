@@ -53,3 +53,6 @@ Route::group(["prefix" => "blog"], function(){
     Route::get("category/{id}", "Client\IndexController@showCategory")->name("public.category");
 });
 
+Route::get("redirect/{driver}", "Admin\Auth\LoginController@redirectToProvider")->name('login.provider');
+Route::get("callback/{driver}", "Admin\Auth\LoginController@handleProviderCallback");
+

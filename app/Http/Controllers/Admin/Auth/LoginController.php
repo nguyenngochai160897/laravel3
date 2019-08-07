@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use Socialite;
 
 class LoginController extends Controller
 {
@@ -54,5 +55,13 @@ class LoginController extends Controller
     public function logout(){
         Auth::logout();
         return redirect()->route("admin.auth.showFormLogin");
+    }
+
+    public function redirectToProvider($driver){
+        return Socialite::driver($driver)->redirect();
+    }
+
+    public function handleProviderCallback($driver){
+        dd(Socialite::driver($driver)->user());
     }
 }
