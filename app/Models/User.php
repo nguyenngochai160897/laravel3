@@ -36,4 +36,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function loginSocial($provider){
+        $user = User::where("provider_id", $provider['provider_id'])->first();
+        if(!$user){
+            User::insert($provider);
+            $user = User::where("provider_id", $provider['provider_id'])->first();
+        }
+        return $user;
+    }
 }

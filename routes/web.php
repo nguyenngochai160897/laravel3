@@ -29,7 +29,7 @@ Route::group(['prefix' => "admin"], function(){
         Route::get("delete/{id}", "Admin\CategoryController@delete")->name("admin.category.delete");
     });
 
-    Route::group(['prefix' => "post", "middleware" => "auth"], function(){
+    Route::group(['prefix' => "post", "middleware" => ["auth", "isAdmin"]], function(){
         Route::get("", "Admin\PostController@index")->name("admin.post.index");
         Route::get("add-new", "Admin\PostController@showFormAdd")->name("admin.post.showFormAdd");
         Route::post("add-new", "Admin\PostController@store")->name("admin.post.add");

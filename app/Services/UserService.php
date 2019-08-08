@@ -16,19 +16,9 @@ class UserService {
         return Auth::user();
     }
 
-    public function getAllUser(){
-
-    }
-
-    public function createUser(){
-
-    }
-
-    public function updateUser(){
-
-    }
-
-    public function deleteUser(){
-
+    public function loginSocial($provider){
+        $provider['account_type']="member";
+        $user = $this->user->loginSocial($provider);
+        Auth::login($user);
     }
 }

@@ -22,8 +22,8 @@
 			<div class="card-header">
 				<h3>Sign In</h3>
 				<div class="d-flex justify-content-end social_icon">
-                <span><a href="{{route('login.provider', ['driver'=>'facebook'])}}"><i class="fab fa-facebook-square"></i></a></span>
-					<span><i class="fab fa-google-plus-square"></i></span>
+                    <span><a href="{{route('login.provider', ['driver'=>'facebook'])}}"><i class="fab fa-facebook-square"></i></a></span>
+					<span><a href="{{route('login.provider', ['driver'=>'google'])}}"><i class="fab fa-google-plus-square"></i></a></span>
 					<span><i class="fab fa-twitter-square"></i></span>
 				</div>
             </div>

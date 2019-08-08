@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Socialite;
+use App\Services\UserService;
 
 class LoginController extends Controller
 {
@@ -29,15 +30,16 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/dashboard';
-
+    private $userService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         $this->middleware('guest')->except('logout');
+        $this->userService = $userService;
     }
 
     public function showFormLogin(){
@@ -62,6 +64,12 @@ class LoginController extends Controller
     }
 
     public function handleProviderCallback($driver){
-        dd(Socialite::driver($driver)->user());
+        $user = Socialite::driver($driver)->user();
+        $provider = [
+            "provider_id" => $user->id,
+            "provider_name" => $driver
+        ];
+        $this->userService->loginSocial($provider);
+        return redirect()->route("dashboard");
     }
 }
