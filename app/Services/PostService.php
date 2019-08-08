@@ -74,6 +74,9 @@ class PostService {
             'user_id' => Auth::user()->id,
             'account_type' => Auth::user()->account_type
         ];
+        if($user['account_type'] == "super-admin"){
+            unset($data['user_id']);
+        }
         $this->post->updatePost($data, $data['id'], $user);
     }
     function deletePost($id) {
