@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PostService {
     public $post;
@@ -13,7 +14,14 @@ class PostService {
     }
 
     function getAllPost($option){
-        $post = $this->post->getAllPost($option)->toArray();
+        $user = null;
+        if(Auth::user()){
+            $user = [
+                'user_id' => Auth::user()->id,
+                'account_type' => Auth::user()->account_type
+            ];
+        }
+        $post = $this->post->getAllPost($option, $user)->toArray();
         $posts = array_map(function($p) {
             $p['image'] = asset('').Storage::url($p['image']);
             return $p;
@@ -23,8 +31,17 @@ class PostService {
         return $post;
     }
     function getPost($id){
-        $post = $this->post->getPost($id);
-        $post->image = asset('').Storage::url($post->image);
+        $user = null;
+        if(Auth::user()){
+            $user = [
+                'user_id' => Auth::user()->id,
+                'account_type' => Auth::user()->account_type
+            ];
+        }
+        $post = $this->post->getPost($id, $user);
+        if($post){
+            $post->image = asset('').Storage::url($post->image);
+        }
         return $post;
     }
     function createPost($data){
@@ -34,10 +51,12 @@ class PostService {
         // save to storage/app/images as the new $filename
         $path = $file->storeAs('public/images', $filename);
         $data['image'] = $path;
+        $data['user_id'] = Auth::user()->id;
         $this->post->createPost($data);
     }
     function updatePost($data){
         $file = $data['image'];
+        $data['user_id'] = Auth::user()->id;
         if(empty($file)){
             $post = $this->getPost($data['id']);
             $imageName = explode("/", $post->image);
@@ -51,9 +70,20 @@ class PostService {
             $path = $file->storeAs('public/images', $filename);
             $data['image'] = $path;
         }
-        $this->post->updatePost($data, $data['id']);
+        $user = [
+            'user_id' => Auth::user()->id,
+            'account_type' => Auth::user()->account_type
+        ];
+        if($user['account_type'] == "super-admin"){
+            unset($data['user_id']);
+        }
+        $this->post->updatePost($data, $data['id'], $user);
     }
     function deletePost($id) {
-        $this->post->deletePost($id);
+        $user = [
+            'user_id' => Auth::user()->id,
+            'account_type' => Auth::user()->account_type
+        ];
+        $this->post->deletePost($id, $user);
     }
 }

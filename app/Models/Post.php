@@ -10,13 +10,23 @@ class Post extends Model
         return $this->belongsTo("App\Models\Category");
     }
 
-    function getAllPost($option){
-        $query = Post::query()->with("category");
+    function queryAuthorization($user){
+        $query = Post::query();
+        if($user){
+            if($user['account_type'] == "admin"){
+                $query = $query->where("user_id", $user['user_id']);
+            }
+        }
+        return $query;
+    }
+    function getAllPost($option, $user){
+        $query = $this->queryAuthorization($user);
+        $query = $query->with("category");
 
         if(!empty($option['search']['category_id'])){
             $query = $query->where("category_id", $option['search']['category_id']);
         }
-        if(!($option['search']['state'])){
+        if( $option['search']['state'] != null){
             $query = $query->where("state", $option['search']['state']);
         }
 
@@ -34,19 +44,24 @@ class Post extends Model
         return $post;
     }
 
-    function getPost($id){
-        return Post::find($id);
+    function getPost($id, $user){
+        $query = $this->queryAuthorization($user);
+        if(!$user) $query = $query->where("state", 1);
+        $query = $query->find($id);
+        return $query;
     }
 
     function createPost($data) {
         Post::insert($data);
     }
 
-    function updatePost($data, $id){
-        Post::where("id", $id)->update($data);
+    function updatePost($data, $id, $user){
+        $query = $this->queryAuthorization($user);
+        $query = $query->where("id", $id)->update($data);
     }
 
-    function deletePost($id){
-        Post::destroy($id);
+    function deletePost($id, $user){
+       $query = $this->queryAuthorization($user);
+       $query->where("id", $id)->delete();
     }
 }
