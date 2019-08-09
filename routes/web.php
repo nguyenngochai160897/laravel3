@@ -43,7 +43,18 @@ Route::group(['prefix' => "admin"], function(){
 
     Route::get("logout", "Admin\Auth\LoginController@logout")->name("admin.auth.logout");
     Route::get("profile", "Admin\UserController@showProfile")->name("admin.showProfile");
+
+
+    Route::get("forgot-password", function(){ return view("admin.user.forgotPassword");})->name("admin.showFormForgotPassword");
+    Route::post("forgot-password", "Admin\Auth\ForgotPasswordController@forgotPassword");
+    Route::get("reset-password/{token}", function(){ return view("admin.user.resetPassword");})->name("admin.showFormResetPassword");
+    Route::post("reset-password/{token}", "Admin\Auth\ResetPasswordController@resetPassword")->name("admin.resetPassword");
+
 });
+
+Route::get("redirect/{driver}", "Admin\Auth\LoginController@redirectToProvider")->name('login.provider');
+Route::get("callback/{driver}", "Admin\Auth\LoginController@handleProviderCallback");
+
 
 //public
 
@@ -53,6 +64,4 @@ Route::group(["prefix" => "blog"], function(){
     Route::get("category/{id}", "Client\IndexController@showCategory")->name("public.category");
 });
 
-Route::get("redirect/{driver}", "Admin\Auth\LoginController@redirectToProvider")->name('login.provider');
-Route::get("callback/{driver}", "Admin\Auth\LoginController@handleProviderCallback");
 

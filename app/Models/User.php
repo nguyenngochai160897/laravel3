@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password', 'provider_name', 'provider_id'
+        'username', 'email', 'password', 'provider_name', 'provider_id', 'token'
     ];
 
     /**
@@ -44,5 +44,29 @@ class User extends Authenticatable
             $user = User::where("provider_id", $provider['provider_id'])->first();
         }
         return $user;
+    }
+
+    function forgotPassword($data){
+        //check email has existed ?
+        $user = User::where("email", $data['email'])->first();
+        if(!$user){
+            return "NotFoundEmail";
+        }
+        //save token in db
+        $user->token = $data['token'];
+        $user->save();
+        return [
+            'token' => $data['token'],
+        ];
+    }
+
+    function resetPassword($data){
+        $user = User::where("token", $data['token'])->first();
+        if(!$user){
+            return "not found token";
+        }
+        $user->token = null;
+        $user->password = bcrypt($data['password']);
+        $user->save();
     }
 }

@@ -54,7 +54,7 @@
 						<input type="password" class="form-control" placeholder="password" name="password">
 					</div>
 					<div class="row align-items-center remember">
-						<input type="checkbox">Remember Me
+						<input type="checkbox" name="remember">Remember Me
 					</div>
 					<div class="form-group">
 						<input type="submit" value="Login" class="btn float-right login_btn">
@@ -66,7 +66,7 @@
 					Don't have an account?<a href="#">Sign Up</a>
 				</div>
 				<div class="d-flex justify-content-center">
-					<a href="#">Forgot your password?</a>
+                <a href="{{ route('admin.showFormForgotPassword')}}">Forgot your password?</a>
 				</div>
 			</div>
 		</div>

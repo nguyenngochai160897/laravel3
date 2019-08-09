@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\LoginRequest;
 use Illuminate\Support\Facades\Auth;
 use Socialite;
 use App\Services\UserService;
+use App\Http\Requests\Admin\ForgotPassWordRequest;
 
 class LoginController extends Controller
 {
@@ -48,7 +49,11 @@ class LoginController extends Controller
 
     public function login(LoginRequest $request){
         $credentials = $request->only(['username', 'password']);
-        if(Auth::attempt($credentials)){
+        $remember = $request->input("remember");
+        if(!empty($remember)){
+            $remember = true;
+        }
+        if(Auth::attempt($credentials, $remember)){
             return redirect()->route("dashboard");
         }
         return redirect()->back()->withErrors("Wrong credentials");
