@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\App;
+use App\Mail\SendEmail;
 
 class UserService {
     private $user;
@@ -30,7 +33,8 @@ class UserService {
             'token' => $token
         ]);
         if($data != "NotFoundEmail"){
-            Redis::set($token, $token, 'EX', 20);
+            Redis::set($token, $token, 'EX', 60*60);
+            Mail::to($email)->send(new SendEmail($token));
         }
         return $data;
     }

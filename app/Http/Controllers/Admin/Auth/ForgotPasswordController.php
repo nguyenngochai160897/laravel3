@@ -40,6 +40,6 @@ class ForgotPasswordController extends Controller
         if($data == "NotFoundEmail"){
             return redirect()->back()->withErrors(["msg" => "Email is not found"]);
         }
-        return redirect()->route("admin.showFormResetPassword", ['token'=> $data['token']]);
+        echo "Check your email";
     }
 }

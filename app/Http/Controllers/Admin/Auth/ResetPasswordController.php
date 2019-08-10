@@ -40,10 +40,6 @@ class ResetPasswordController extends Controller
         $this->middleware('guest');
     }
 
-    function showFormResetPassword($token){
-
-    }
-
     function resetPassword(ResetPasswordRequest $request, $token){
         $data = $this->userService->resetPassword($request->input("password"), $token);
         if($data){
