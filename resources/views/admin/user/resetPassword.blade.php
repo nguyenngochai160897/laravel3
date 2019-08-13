@@ -39,6 +39,8 @@
                     </div>
                 @endif
                 <form method="post" id="passwordForm">
+                    <input type="text" class="input-lg form-control" name="token"
+                        placeholder="code" autocomplete="off">
                     <input type="password" class="input-lg form-control" name="password" id="password1"
                         placeholder="New Password" autocomplete="off">
                     <input type="password" class="input-lg form-control" name="c_password" id="password2"

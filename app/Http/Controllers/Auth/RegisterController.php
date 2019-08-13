@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SignUpRequest;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -29,15 +31,16 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo = '/home';
-
+    private $userService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
         $this->middleware('guest');
+        $this->userService = $userService;
     }
 
     /**
@@ -68,5 +71,15 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+    }
+
+    public function showFormSignUp(){
+        return view("admin.user.signUp");
+    }
+
+    public function signUp(SignUpRequest $request){
+        $data = $request->only(['username', 'email', 'password']);
+        $this->userService->signUp($data);
+        return redirect()->route('public.index');
     }
 }

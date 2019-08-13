@@ -9,7 +9,7 @@ class ForgotPassWordRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required'
+            'email' => 'required|email'
         ];
     }
 

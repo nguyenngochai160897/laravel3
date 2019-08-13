@@ -3,29 +3,26 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\CreateCommentRequest;
 use App\Services\CategoryService;
+use App\Services\CommentService;
 use App\Services\PostService;
-use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class IndexController extends Controller
 {
-    private $categoryService, $postService;
-    public function __construct(CategoryService $categoryService, PostService $postService)
+    private $categoryService, $postService, $commentService;
+    public function __construct(CategoryService $categoryService, PostService $postService,
+        CommentService $comment)
     {
         $this->categoryService = $categoryService;
         $this->postService = $postService;
+        $this->commentService = $comment;
     }
-    function defaultSideBar(){
-        $option = [
-            "limit" => 5,
-            "search" => [
-                "category_id" => null,
-                "state" => 1
-            ],
-            "orderBy" => [
-                "id" => 'desc',
-            ]
-        ];
+    private function defaultSideBar(){
+        $option = config("postOption.option");
+        $option['orderBy'] = ["id" => "desc"];
+        $option['search']['state'] = 1;
         $categories = $this->categoryService->getAllCategory();
         $postRecent = $this->postService->getAllPost($option);
         $data = [
@@ -34,31 +31,37 @@ class IndexController extends Controller
         ];
         return $data;
     }
-    function index(){
+    public function index(){
         return view("public.index")->with($this->defaultSideBar());
     }
-    function showPost($id){
+    public function showPost($id){
         $data = $this->defaultSideBar();
         $post = $this->postService->getPost($id);
-        $data = array_merge($data, ['post' => $post]);
+        $comments = $this->commentService->getAllComment($id)->toArray();
+        $data = array_merge($data, ['post' => $post, 'comments' => $comments]);
         return view("public.post")->with($data);
     }
-    function showCategory($id){
+    public function showCategory($id){
         $data = $this->defaultSideBar();
         $category = $this->categoryService->getCategory($id);
+        $option = config("postOption.option");
+        $option['orderBy'] = ["id" => "desc"];
+        $option['search']['state'] = 1;
+        $option['category_id'] = $id;
         $data = array_merge($data, [
-            'posts' => $this->postService->getAllPost([
-                "limit" => 5,
-                "search" => [
-                    "category_id" => $id,
-                    "state" => "1"
-                ],
-                "orderBy" => [
-                    "id" => 'desc',
-                ]
-            ])['data'],
+            'posts' => $this->postService->getAllPost($option)['data'],
             'category_name' => $category->name,
         ]);
         return view("public.category")->with($data);
     }
+
+    public function createComment(CreateCommentRequest $request){
+        //check user logon ?
+        if(!Auth::check()){
+            return redirect()->route("admin.auth.showFormLogin");
+        }
+        $this->commentService->createComment($request->only(["comment", "post_id"]));
+        return redirect()->back();
+    }
+
 }

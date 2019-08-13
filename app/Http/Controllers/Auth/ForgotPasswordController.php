@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controller\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use App\Http\Requests\Admin\ForgotPassWordRequest;
+use App\Services\UserService;
 
 class ForgotPasswordController extends Controller
 {
@@ -25,8 +27,19 @@ class ForgotPasswordController extends Controller
      *
      * @return void
      */
-    public function __construct()
+
+    private $userService;
+    public function __construct(UserService $userService)
     {
         $this->middleware('guest');
+        $this->userService = $userService;
+    }
+
+    public function forgotPassword(ForgotPassWordRequest $request){
+        $data = $this->userService->forgotPassword($request->input('email'));
+        if($data == "NotFoundEmail"){
+            return redirect()->back()->withErrors(["msg" => "Email is not found"]);
+        }
+        return redirect()->route('admin.showFormResetPassword');
     }
 }

@@ -69,4 +69,9 @@ class User extends Authenticatable
         $user->password = bcrypt($data['password']);
         $user->save();
     }
+
+    function signUp($data){
+        User::insert($data);
+        return User::where($data)->first();
+    }
 }

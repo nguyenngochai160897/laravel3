@@ -38,22 +38,22 @@ Route::group(['prefix' => "admin"], function(){
         Route::get("delete/{id}", "Admin\PostController@delete")->name("admin.post.delete");
     });
 
-    Route::get("login", "Admin\Auth\LoginController@showFormLogin")->name("admin.auth.showFormLogin");
-    Route::post("login", "Admin\Auth\LoginController@login")->name("admin.auth.login");
+    Route::get("login", "Auth\LoginController@showFormLogin")->name("admin.auth.showFormLogin");
+    Route::post("login", "Auth\LoginController@login")->name("admin.auth.login");
 
-    Route::get("logout", "Admin\Auth\LoginController@logout")->name("admin.auth.logout");
+    Route::get("logout", "Auth\LoginController@logout")->name("admin.auth.logout");
     Route::get("profile", "Admin\UserController@showProfile")->name("admin.showProfile");
 
 
     Route::get("forgot-password", function(){ return view("admin.user.forgotPassword");})->name("admin.showFormForgotPassword");
-    Route::post("forgot-password", "Admin\Auth\ForgotPasswordController@forgotPassword");
-    Route::get("reset-password/{token}", function(){ return view("admin.user.resetPassword");})->name("admin.showFormResetPassword");
-    Route::post("reset-password/{token}", "Admin\Auth\ResetPasswordController@resetPassword")->name("admin.resetPassword");
+    Route::post("forgot-password", "Auth\ForgotPasswordController@forgotPassword");
+    Route::get("reset-password", function(){ return view("admin.user.resetPassword");})->name("admin.showFormResetPassword");
+    Route::post("reset-password", "Auth\ResetPasswordController@resetPassword")->name("admin.resetPassword");
 
 });
 
-Route::get("redirect/{driver}", "Admin\Auth\LoginController@redirectToProvider")->name('login.provider');
-Route::get("callback/{driver}", "Admin\Auth\LoginController@handleProviderCallback");
+Route::get("redirect/{driver}", "Auth\LoginController@redirectToProvider")->name('login.provider');
+Route::get("callback/{driver}", "Auth\LoginController@handleProviderCallback");
 
 
 //public
@@ -62,6 +62,8 @@ Route::group(["prefix" => "blog"], function(){
     Route::get("", "Client\IndexController@index")->name("public.index");
     Route::get("post/{id}", "Client\IndexController@showPost")->name("public.post");
     Route::get("category/{id}", "Client\IndexController@showCategory")->name("public.category");
+    Route::post("comment", "Client\IndexController@createComment")->name("public.comment.create");
 });
 
-
+Route::get("sign-up", "Auth\RegisterController@showFormSignUp")->name("auth.showFormSignUp");
+Route::post("sign-up", "Auth\RegisterController@signUp")->name("auth.signUp");

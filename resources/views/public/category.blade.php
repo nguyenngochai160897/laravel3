@@ -12,7 +12,7 @@
                 <h2 class="title">{{$post['title'] }}</h2>
                 <time class="date-publisher">{{date("d/m/Y H:i", strtotime($postRecent[0]['updated_at']))}}</time>
                 <div class="snapshort" style="color: #8c979e; line-height: 1.8">
-                <p> {{ $postRecent[0]['content'] }}</p>
+                <p> {{ $postRecent[0]['snapshort'] }}</p>
                 </div>
                 <p style="background: #745cf9; width:45%; color:#fff; padding: 10px 20px">
                     <a class="read-more" style="color:wheat; font-weight: 600;" href="{{ route('public.post', ['id' => $post['id']]) }}">Read more

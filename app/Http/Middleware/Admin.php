@@ -16,7 +16,8 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->account_type == "admin" || Auth::user()->account_type == "super-admin")
+        $accountCurrent = Auth::user()->account_type;
+        if($accountCurrent == "admin" || $accountCurrent == "super-admin")
             return $next($request);
         else{
             return redirect()->route("admin.auth.login");

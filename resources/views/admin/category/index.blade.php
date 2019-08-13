@@ -55,7 +55,7 @@
                                     <td>{{ count($category['posts']) }}</td>
                                     <td>
                                         <a class="btn btn-info btn-sm" href="{{ route('admin.category.showFormUpdate', ['id'=> $category['id']]) }}"><i class="fa fa-edit"></i> Edit</a> |
-                                            <form action="{{  route('admin.category.delete', ['id' => $category['id']]) }}" method="get"> @csrf <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete</button></form>
+                                            {{-- <form action="{{  route('admin.category.delete', ['id' => $category['id']]) }}" method="get"> @csrf <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Delete</button></form> --}}
                                     </td>
                                 </tr>
                                 @endforeach

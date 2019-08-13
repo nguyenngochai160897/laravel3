@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use App\Services\UserService;
+use App\Http\Requests\Admin\ResetPasswordRequest;
 
 class ResetPasswordController extends Controller
 {
@@ -26,14 +28,23 @@ class ResetPasswordController extends Controller
      * @var string
      */
     protected $redirectTo = '/home';
-
+    private $userService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserService $userService)
     {
+        $this->userService = $userService;
         $this->middleware('guest');
+    }
+
+    public function resetPassword(ResetPasswordRequest $request){
+        $data = $this->userService->resetPassword($request->input("password"), $request->input("token"));
+        if($data){
+            return redirect()->back()->withErrors(["msg"=> $data]);
+        }
+        return redirect()->route("admin.auth.showFormLogin");
     }
 }

@@ -1,2 +1,1 @@
-This is link reset password
-<a href="{{ route('admin.resetPassword', ['token' => $token]) }}">{{$token}}</a>
+{{__('This is code for reset password')}}: <h3>{{ $token}}</h3>

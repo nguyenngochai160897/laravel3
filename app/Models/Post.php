@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    function category(){
+    public function category(){
         return $this->belongsTo("App\Models\Category");
     }
 
-    function queryAuthorization($user){
+    public function queryAuthorization($user){
         $query = Post::query();
         if($user){
             if($user['account_type'] == "admin"){
@@ -19,7 +19,7 @@ class Post extends Model
         }
         return $query;
     }
-    function getAllPost($option, $user){
+    public function getAllPost($option, $user){
         $query = $this->queryAuthorization($user);
         $query = $query->with("category");
 
@@ -44,23 +44,23 @@ class Post extends Model
         return $post;
     }
 
-    function getPost($id, $user){
+    public function getPost($id, $user){
         $query = $this->queryAuthorization($user);
         if(!$user) $query = $query->where("state", 1);
         $query = $query->find($id);
         return $query;
     }
 
-    function createPost($data) {
+    public function createPost($data) {
         Post::insert($data);
     }
 
-    function updatePost($data, $id, $user){
+    public function updatePost($data, $id, $user){
         $query = $this->queryAuthorization($user);
         $query = $query->where("id", $id)->update($data);
     }
 
-    function deletePost($id, $user){
+    public function deletePost($id, $user){
        $query = $this->queryAuthorization($user);
        $query->where("id", $id)->delete();
     }

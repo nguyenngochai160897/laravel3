@@ -7,18 +7,19 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class PostService {
-    public $post;
+    private $post;
 
     public function __construct(Post $post) {
         $this->post = $post;
     }
 
-    function getAllPost($option){
+    public function getAllPost($option){
         $user = null;
-        if(Auth::user()){
+        $userCurrent = Auth::user();
+        if($userCurrent){
             $user = [
-                'user_id' => Auth::user()->id,
-                'account_type' => Auth::user()->account_type
+                'user_id' =>$userCurrent->id,
+                'account_type' => $userCurrent->account_type
             ];
         }
         $post = $this->post->getAllPost($option, $user)->toArray();
@@ -30,12 +31,13 @@ class PostService {
 
         return $post;
     }
-    function getPost($id){
+    public function getPost($id){
         $user = null;
-        if(Auth::user()){
+        $userCurrent = Auth::user();
+        if($userCurrent){
             $user = [
-                'user_id' => Auth::user()->id,
-                'account_type' => Auth::user()->account_type
+                'user_id' =>$userCurrent->id,
+                'account_type' => $userCurrent->account_type
             ];
         }
         $post = $this->post->getPost($id, $user);
@@ -44,7 +46,7 @@ class PostService {
         }
         return $post;
     }
-    function createPost($data){
+    public function createPost($data){
         $file = $data['image'];
         // generate a new filename. getClientOriginalExtension() for the file extension
         $filename = time() .'-'. $file->getClientOriginalName();
@@ -54,35 +56,36 @@ class PostService {
         $data['user_id'] = Auth::user()->id;
         $this->post->createPost($data);
     }
-    function updatePost($data){
+    public function updatePost($data){
         $file = $data['image'];
         $data['user_id'] = Auth::user()->id;
-        if(empty($file)){
-            $post = $this->getPost($data['id']);
-            $imageName = explode("/", $post->image);
-            $imageName = ($imageName[count($imageName)-1]);
-            $data['image'] = "public/images/".$imageName;
-        }
-        else{
+        if(!empty($file)){
             // generate a new filename. getClientOriginalExtension() for the file extension
             $filename = time() .'-'. $file->getClientOriginalName();
             // save to storage/app/images as the new $filename
             $path = $file->storeAs('public/images', $filename);
             $data['image'] = $path;
         }
-        $user = [
-            'user_id' => Auth::user()->id,
-            'account_type' => Auth::user()->account_type
-        ];
+        else {
+            unset($data['image']);
+        }
+        $userCurrent = Auth::user();
+        if($userCurrent){
+            $user = [
+                'user_id' =>$userCurrent->id,
+                'account_type' => $userCurrent->account_type
+            ];
+        }
         if($user['account_type'] == "super-admin"){
             unset($data['user_id']);
         }
         $this->post->updatePost($data, $data['id'], $user);
     }
-    function deletePost($id) {
+    public function deletePost($id) {
+        $userCurrent = Auth::user();
         $user = [
-            'user_id' => Auth::user()->id,
-            'account_type' => Auth::user()->account_type
+            'user_id' => $userCurrent->id,
+            'account_type' => $userCurrent->account_type
         ];
         $this->post->deletePost($id, $user);
     }

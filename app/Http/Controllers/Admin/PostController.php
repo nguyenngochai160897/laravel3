@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\PostService;
 use App\Services\CategoryService;
@@ -17,15 +16,8 @@ class PostController extends Controller
         $this->postService = $postService;
         $this->categoryService = $categoryService;
     }
-    function index(){
-        $option = [
-            "limit" => 5,
-            "search" => [
-                "category_id" => null,
-                "state" => null,
-            ],
-            "orderBy" => null
-        ];
+    public function index(){
+        $option = config("postOption.option");
         if(isset(\Request::query()['category_id']))  $option['search']['category_id']=\Request::query()['category_id'];
         if(isset(\Request::query()['state']))  $option['search']['state']=\Request::query()['state'];
         $posts = $this->postService->getAllPost($option);
@@ -37,12 +29,12 @@ class PostController extends Controller
             "pagination" => $pagination
         ]);
     }
-    function showFormAdd(){
+    public function showFormAdd(){
         return view("admin.post.add")->with(
             "categories" , $this->categoryService->getAllcategory()
         );
     }
-    function store(PostRequest $request){
+    public function store(PostRequest $request){
         $data = [
             'title' => $request->input("title"),
             'category_id' => $request->input("category_id"),
@@ -54,12 +46,12 @@ class PostController extends Controller
         $this->postService->createPost($data);
         return redirect()->route("admin.post.index");
     }
-    function showFormUpdate($id){
+    public function showFormUpdate($id){
         return view("admin.post.update")->with([
             'post'=> $this->postService->getPost($id),
             "categories" => $this->categoryService->getAllCategory(),]);
     }
-    function update(PostUpdateRequest $request, $id){
+    public function update(PostUpdateRequest $request, $id){
         $data = [
             "id" => $id,
             'title' => $request->input("title"),
@@ -72,7 +64,7 @@ class PostController extends Controller
         $this->postService->updatePost($data);
         return redirect()->route("admin.post.index");
     }
-    function delete($id){
+    public function delete($id){
         $this->postService->deletePost($id);
         return redirect()->route("admin.post.index");
     }

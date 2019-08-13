@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         ],
         [
             "username" =>"hainguyen",
-            "email" => "hainguyen@gmail.com",
+            "email" => "nguyenngochai160897@gmail.com",
             "password" => bcrypt("hainguyen"),
             "account_type" => "admin"
         ],
