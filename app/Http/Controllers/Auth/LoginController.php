@@ -53,8 +53,7 @@ class LoginController extends Controller
             $remember = true;
         }
         if(Auth::attempt($credentials, $remember)){
-            // dd(Auth::user());
-            if(Auth::user()->account_type == "member"){
+            if(Auth::user()->account_type == config("role.MEMBER")){
                 return redirect()->route("public.index");
             }
             return redirect()->route("dashboard");
@@ -63,7 +62,11 @@ class LoginController extends Controller
     }
 
     public function logout(){
+        $account_type = Auth::user()->account_type;
         Auth::logout();
+        if($account_type == config("role.MEMBER")){
+            return redirect()->route("public.index");
+        }
         return redirect()->route("admin.auth.showFormLogin");
     }
 

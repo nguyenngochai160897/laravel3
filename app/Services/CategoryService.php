@@ -12,12 +12,30 @@ class CategoryService {
         $this->category = $category;
     }
 
-    public function getAllCategory() {
+    public function getAllCategory($post_active = false) {
+        $categories = array();
         if(!empty(Redis::get("categories"))){
             $category = json_decode(Redis::get("categories"), true);
         }
         else {
-            $category = $this->category->getAllCategory();
+            $category = $this->category->getAllCategory()->toArray();
+            if($post_active){
+                $postActives = array();
+                foreach($category as $cat){
+                    $postActive = array_map(function($post){
+                        if($post['state'] == 1){
+                            return $post;
+                        }
+                    }, $cat['posts']);
+                    $postActive = array_filter($postActive, function($value){
+                        return !is_null($value);
+                    });
+                    array_push($postActives, $postActive);
+                }
+                for($i = 0; $i < count($category); $i++){
+                    $category[$i]['posts'] = $postActives[$i];
+                }
+            }
             // Redis::set("categories",  json_encode($category));
         }
         // Redis::del("categories");

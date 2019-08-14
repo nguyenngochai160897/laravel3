@@ -20,7 +20,7 @@ class UserService {
     }
 
     public function loginSocial($provider){
-        $provider['account_type']="member";
+        $provider['account_type']=config("role.MEMBER");
         $user = $this->user->loginSocial($provider);
         Auth::login($user);
     }
@@ -35,6 +35,7 @@ class UserService {
             'email' => $email,
             'token' => $codeToken
         ]);
+
         if($data != "NotFoundEmail"){
             Redis::set($codeToken, $codeToken, 'EX', config('redis.token_email'));
             Mail::to($email)->send(new SendEmail($codeToken));
@@ -44,7 +45,11 @@ class UserService {
 
     public function resetPassword($password, $token){
         $token = Redis::get($token);
-        if(!$token) return "token_reset expired";
+        if(!$token) {
+            return [
+                "error" => 'token_expire'
+            ];
+        }
         $data = $this->user->resetPassword([
             'password' => $password,
             "token" => $token
@@ -54,7 +59,7 @@ class UserService {
 
     //temporary for member
     public function signUp($data){
-        $data['account_type'] = "member";
+        $data['account_type'] = config("role.MEMBER");
         $data['password'] = bcrypt($data['password']);
         $user = $this->user->signUp($data);
         Auth::login($user);

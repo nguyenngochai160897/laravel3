@@ -42,8 +42,8 @@ class ResetPasswordController extends Controller
 
     public function resetPassword(ResetPasswordRequest $request){
         $data = $this->userService->resetPassword($request->input("password"), $request->input("token"));
-        if($data){
-            return redirect()->back()->withErrors(["msg"=> $data]);
+        if(isset($data['error'])){
+            return redirect()->back()->withErrors(["msg"=> "Your token expired"]);
         }
         return redirect()->route("admin.auth.showFormLogin");
     }

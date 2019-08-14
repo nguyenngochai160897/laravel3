@@ -12,8 +12,23 @@
        <p> {{ $postRecent[0]['content'] }}</p>
     </div>
 
-    <div class="row col-8">
+    <div class="col-8">
+        @if (isset($comments))
+        <h5>This Post Has {{ count($comments)}} Comments</h5>
 
+        @foreach ($comments as $comment)
+        <hr>
+            <div class="row comment-list p-3">
+                <div>
+                    <b class="mr-5 comment-user">{{ $comment['user']['username'] ? $comment['user']['username'] : 'Unknow'  }}: </b>
+                </div>
+                <div class="comment-content">
+                    {{ $comment['comment'] }}
+                </div>
+            </div>
+        <hr>
+        @endforeach
+        @endif
             <form action="{{ route('public.comment.create') }}" method="post">
                 @csrf
                 <input class='d-none' type="text" name="post_id" value="{{ $postRecent[0]['id'] }}">

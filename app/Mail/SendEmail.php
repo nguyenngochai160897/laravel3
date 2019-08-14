@@ -29,7 +29,7 @@ class SendEmail extends Mailable
      */
     public function build()
     {
-        return $this->from(env("MAIL_USERNAME"))
+        return $this->from(config('mail.username'))
                     ->view("admin.user.sendMail")
                     ->with([
                         'token' => $this->token

@@ -87,6 +87,9 @@
             <span class="float-right">
                 @if (Auth::user())
                     You have logon
+                    <a href="{{ route("admin.auth.logout") }}"><button>Signout</button></a>
+                @else
+                <a href="{{ route("admin.auth.login") }}"><button>Login</button></a>
                 @endif
             </span>
         </nav>
@@ -111,8 +114,7 @@
                     <h1>Categories</h1>
                     <ul>
                         @foreach ($categories as $category)
-                        <li><a
-                                href="{{ route('public.category', ['id' => $category['id']]) }}">{{ $category['name'] }}</a>
+                        <li><a href="{{ route('public.category', ['id' => $category['id']]) }}">{{ $category['name'] }} ({{count($category['posts'])}})</a>
                         </li>
                         <hr>
                         @endforeach

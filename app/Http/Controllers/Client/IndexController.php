@@ -23,7 +23,7 @@ class IndexController extends Controller
         $option = config("postOption.option");
         $option['orderBy'] = ["id" => "desc"];
         $option['search']['state'] = 1;
-        $categories = $this->categoryService->getAllCategory();
+        $categories = $this->categoryService->getAllCategory(1); //all category with post be displayed
         $postRecent = $this->postService->getAllPost($option);
         $data = [
             "categories" => $categories,
@@ -32,7 +32,13 @@ class IndexController extends Controller
         return $data;
     }
     public function index(){
-        return view("public.index")->with($this->defaultSideBar());
+        $data = $this->defaultSideBar();
+        $postRecent = $data['postRecent'];
+        if($postRecent[0]){
+            $comments = $this->commentService->getAllComment($postRecent[0]['id']);
+            $data = array_merge($data, ['comments' => $comments]);
+        }
+        return view("public.index")->with($data);
     }
     public function showPost($id){
         $data = $this->defaultSideBar();
@@ -47,7 +53,7 @@ class IndexController extends Controller
         $option = config("postOption.option");
         $option['orderBy'] = ["id" => "desc"];
         $option['search']['state'] = 1;
-        $option['category_id'] = $id;
+        $option['search']['category_id'] = $id;
         $data = array_merge($data, [
             'posts' => $this->postService->getAllPost($option)['data'],
             'category_name' => $category->name,

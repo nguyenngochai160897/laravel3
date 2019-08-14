@@ -63,7 +63,9 @@ class User extends Authenticatable
     function resetPassword($data){
         $user = User::where("token", $data['token'])->first();
         if(!$user){
-            return "not found token";
+            return [
+                "error" => "token_expire"
+            ];
         }
         $user->token = null;
         $user->password = bcrypt($data['password']);
