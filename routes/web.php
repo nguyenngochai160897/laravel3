@@ -66,3 +66,5 @@ Route::group(["prefix" => "blog"], function(){
     Route::post("comment", "Client\IndexController@createComment")->name("public.comment.create");
 });
 
+//exception
+Route::get('exception/index', 'ExceptionController@index');
