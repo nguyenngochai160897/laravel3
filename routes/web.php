@@ -66,3 +66,4 @@ Route::group(["prefix" => "blog"], function(){
     Route::post("comment", "Client\IndexController@createComment")->name("public.comment.create");
 });
 
+Route::get("collection", "CollectionController@index");

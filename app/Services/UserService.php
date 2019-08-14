@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
+use App\Jobs\SendEmailJob;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\SendEmail;
 
 class UserService {
     private $user;
@@ -38,7 +37,8 @@ class UserService {
 
         if($data != "NotFoundEmail"){
             Redis::set($codeToken, $codeToken, 'EX', config('redis.token_email'));
-            Mail::to($email)->send(new SendEmail($codeToken));
+            //send mail with queue
+            SendEmailJob::dispatch($codeToken, $email);
         }
         return $data;
     }

@@ -37,6 +37,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function comments(){
+        return $this->hasMany("App\Models\User");
+    }
     function loginSocial($provider){
         $user = User::where("provider_id", $provider['provider_id'])->first();
         if(!$user){
